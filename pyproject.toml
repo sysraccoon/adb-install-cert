@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "adb-install-cert"
+version = "0.1.0"
+description = ""
+authors = ["sysraccoon <sysraccoon@gmail.com>"]
+# readme = "README.md"
+# license = "BSD"
+packages = [
+  { include = "adb_install_cert" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+adbutils = "^2.6.1"
+click = "^8.1.7"
+
+[tool.poetry.scripts]
+adb-install-cert = "adb_install_cert:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
