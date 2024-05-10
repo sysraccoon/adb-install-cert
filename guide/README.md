@@ -1,9 +1,12 @@
 # Manual certificate installation to Android system store (**root required!**)
 
-Automatic solution [described here](https://github.com/sysraccoon/adb-install-cert)
+Automated solution [described here](https://github.com/sysraccoon/adb-install-cert).
 Below I describe manual steps that reproduce application inner logic.
 
 ## Generate new pem certificate (skip if already exists)
+
+Demo:\
+![demo-cert-gen](./demo-cert-gen.gif)
 
 ```sh
 $ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
@@ -19,6 +22,9 @@ $ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out
 > ```
 
 ## Prepare certificate
+
+Demo:\
+![demo-prep-cert](./demo-prep-cert.gif)
 
 Android work with PEM certificates that named as `$hash.0` where `$hash` is md5 based hash that can be generate via openssl with `-subject_hash_old` option:
 
@@ -77,6 +83,9 @@ chcon u:object_r:system_file:s0 /system/etc/security/cacerts/*
 Starting with Android 14, all certificates available in `/apex/com.android.conscrypt/cacerts`, but this folder is available in read-only mode. Remounting them as `tmpfs` don't actually work. We should change filesystem inside zygote (and zygote childs) namespace.
 
 Do same steps as for Android 10, but copy certs from `/apex/com.android.conscrypt/cacerts/*` instead of `/system/etc/security/cacerts/*`
+
+![demo-android-14](./demo-android-14.gif)
+
 ```sh
 $ adb shell su
 
@@ -89,12 +98,14 @@ chmod 644 /system/etc/security/cacerts/e210c8c4.0
 chcon u:object_r:system_file:s0 /system/etc/security/cacerts/*
 ```
 
-Perform bind mount inside zygote (and child) processes:
+Perform bind mount inside zygote (and child) processes
+
+![demo-android-14-conscrypt](./demo-android-14-conscrypt.gif)
 ```sh
 $ adb shell su
 
 ZYGOTE_PID=$(pidof zygote || true)
-ZYGOTE64_PID=$(pidof zygote || true)
+ZYGOTE64_PID=$(pidof zygote64 || true)
 for Z_PID in "$ZYGOTE_PID" "$ZYGOTE64_PID"; do
     if [ -n "$Z_PID" ]; then
         nsenter --mount=/proc/$Z_PID/ns/mnt -- \
@@ -112,3 +123,7 @@ for PID in $APP_PIDS; do
 done
 wait
 ```
+
+Result:
+
+![android-14-trusted-store-demo](./android-14-trusted-store-demo.gif)
