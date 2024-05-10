@@ -126,4 +126,4 @@ wait
 
 Result:
 
-![android-14-trusted-store-demo](./android-14-trusted-store-demo.gif)
+<img src="./android-14-trusted-store-demo.gif" height="360">
