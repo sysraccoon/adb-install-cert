@@ -1,7 +1,6 @@
-# adb-install-cert
+# adb-install-cert (root required)
 
 This script automatically detect android version and choose preffered way to install certificate to system store.
-**Root access on device required (`su` command used)**
 
 ## Quick start
 
