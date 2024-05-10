@@ -5,7 +5,7 @@ import typing
 from contextlib import contextmanager
 from adbutils._utils import adb_path
 from pathlib import Path
-from adbutils import AdbDevice
+from adbutils import AdbDevice, AdbError
 
 
 def prepare_pem(pem_cert_filename: Path, out_dir_path: Path) -> Path:
@@ -61,7 +61,7 @@ def get_pem_info(pem_cert_filename: Path, fields: typing.List[str] = [], keep_ce
 
 @contextmanager
 def open_root_shell(device):
-    def perform_command_as_root(cmd: typing.List[str]):
+    def perform_command_as_root(cmd: typing.List[str], check_error=True):
         root_sh_cmd = [adb_path(), "-s", device.serial] if device.serial else [adb_path()]
         root_sh_cmd.extend(["shell", "su"])
         with subprocess.Popen(
@@ -74,7 +74,14 @@ def open_root_shell(device):
         ) as root_sh:
             cmd = list2cmdline(cmd)
             logging.debug(f"perform_command_as_root: {cmd}")
-            stdin, stderr = root_sh.communicate(cmd)
+            stdin, stderr = root_sh.communicate(cmd + ";\necho $?;")
+
+            output_lines = stdin.splitlines()
+            exit_code = int(output_lines[-1])
+
+            if exit_code != 0:
+                raise AdbError(f"command exit with error (exit_code: {exit_code})\nstderr: {stderr}")
+
             return stdin, stderr
     yield perform_command_as_root
 
@@ -89,3 +96,7 @@ def device_is_rooted(device: AdbDevice) -> bool:
 
 def get_android_version(device: AdbDevice) -> int:
     return int(device.prop.get("ro.build.version.release"))
+
+
+def apex_is_present(device: AdbDevice) -> bool:
+    return device.shell2(["stat", "/apex"]).returncode == 0
