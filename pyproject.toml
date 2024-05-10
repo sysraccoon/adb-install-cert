@@ -3,8 +3,8 @@ name = "adb-install-cert"
 version = "0.1.0"
 description = "Install certificates to android system store"
 authors = ["sysraccoon <sysraccoon@gmail.com>"]
-# readme = "README.md"
-# license = "BSD"
+readme = "README.md"
+license = "MIT"
 packages = [
   { include = "adb_install_cert" }
 ]
