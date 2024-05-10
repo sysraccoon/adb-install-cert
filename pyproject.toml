@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "adb-install-cert"
 version = "0.1.0"
-description = ""
+description = "Install certificates to android system store"
 authors = ["sysraccoon <sysraccoon@gmail.com>"]
 # readme = "README.md"
 # license = "BSD"
