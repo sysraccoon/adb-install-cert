@@ -19,12 +19,21 @@
         ) pypkgs-build-requirements));
     in
     {
+      apps = rec {
+          default = adb-install-cert;
+          adb-install-cert = {
+            type = "app";
+            program = "${self.packages.adb-install-cert}/bin/adb-install-cert";
+          };
+      };
+
       packages = forAllSystems (system: let
         p2n = (poetry2nix.lib.mkPoetry2Nix { pkgs = pkgs.${system}; });
       in rec {
         default = adb-install-cert;
         adb-install-cert = p2n.mkPoetryApplication {
           projectDir = self;
+          propogateBuildInputs = [ pkgs.${system}.openssl ];
           overrides = p2n-overrides p2n;
         };
       });

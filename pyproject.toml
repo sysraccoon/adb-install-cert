@@ -15,7 +15,7 @@ adbutils = "^2.6.1"
 click = "^8.1.7"
 
 [tool.poetry.scripts]
-adb-install-cert = "adb_install_cert:main"
+adb-install-cert = "adb_install_cert.__main__:adb_install_cert"
 
 [build-system]
 requires = ["poetry-core"]
