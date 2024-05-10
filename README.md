@@ -10,6 +10,12 @@ Change path to pem certificate and run:
 nix --extra-experimental-features "nix-command flakes" run "github:sysraccoon/adb-install-cert" -- --pem-cert ~/path/to/cert.pem
 ```
 
+## PyPi installation
+
+```sh
+pip install adb-install-cert
+```
+
 ## NixOS flake installation
 
 ```
