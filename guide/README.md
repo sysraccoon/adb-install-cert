@@ -5,9 +5,6 @@ Below I describe manual steps that reproduce application inner logic.
 
 ## Generate new pem certificate (skip if already exists)
 
-Demo:\
-![demo-cert-gen](./demo-cert-gen.gif)
-
 ```sh
 $ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
 ```
@@ -22,9 +19,6 @@ $ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out
 > ```
 
 ## Prepare certificate
-
-Demo:\
-![demo-prep-cert](./demo-prep-cert.gif)
 
 Android work with PEM certificates that named as `$hash.0` where `$hash` is md5 based hash that can be generate via openssl with `-subject_hash_old` option:
 
@@ -84,8 +78,6 @@ Starting with Android 14, all certificates available in `/apex/com.android.consc
 
 Do same steps as for Android 10, but copy certs from `/apex/com.android.conscrypt/cacerts/*` instead of `/system/etc/security/cacerts/*`
 
-![demo-android-14](./demo-android-14.gif)
-
 ```sh
 $ adb shell su
 
@@ -100,7 +92,6 @@ chcon u:object_r:system_file:s0 /system/etc/security/cacerts/*
 
 Perform bind mount inside zygote (and child) processes
 
-![demo-android-14-conscrypt](./demo-android-14-conscrypt.gif)
 ```sh
 $ adb shell su
 
@@ -123,7 +114,3 @@ for PID in $APP_PIDS; do
 done
 wait
 ```
-
-Result:
-
-<img src="./android-14-trusted-store-demo.gif" height="360">
