@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 import typing
 from contextlib import contextmanager
@@ -8,9 +7,17 @@ from pathlib import Path
 from adbutils import AdbDevice, AdbError
 
 
+def convert_der_to_pem(der_cert_filename: Path, out_pem_filename: Path):
+    _openssl_x509(str(der_cert_filename), "DER", "-out", out_pem_filename)
+
+
+def convert_pem_to_pem(pem_cert_filename: Path, out_pem_filename: Path):
+    _openssl_x509(str(pem_cert_filename), "PEM", "-out", out_pem_filename)
+
+
 def prepare_pem(pem_cert_filename: Path, out_dir_path: Path) -> Path:
     pem_filename = get_pem_info(pem_cert_filename, fields=["-subject_hash_old"]).strip() + ".0"
-    pem_cert_contet = get_pem_info(pem_cert_filename, keep_cert = True)
+    pem_cert_contet = get_pem_content(pem_cert_filename)
     pem_additional_content = get_pem_info(pem_cert_filename, fields=["-text", "-fingerprint"])
     pem_out_path = out_dir_path / pem_filename
     with pem_out_path.open(mode="w") as pem_out:
@@ -18,16 +25,25 @@ def prepare_pem(pem_cert_filename: Path, out_dir_path: Path) -> Path:
     return pem_out_path
 
 
-def get_pem_info(pem_cert_filename: Path, fields: typing.List[str] = [], keep_cert: bool = False):
-    keep_cert = [] if keep_cert else ["-noout"]
+def get_pem_info(pem_cert_filename: Path, fields: typing.List[str] = []):
+    return _openssl_x509(pem_cert_filename, "PEM", "-noout", *fields)
+
+
+def get_pem_content(cert_filename: Path) -> str:
+    return _openssl_x509(cert_filename, "PEM")
+
+
+def _openssl_x509(cert_filename: Path, inform: str, *args: typing.List[str]) -> str:
     cert_proc_result = subprocess.run(
         [
-            "openssl", "x509", "-inform", "PEM",
-            *fields, *keep_cert,
-            "-in", str(pem_cert_filename)],
+            "openssl", "x509", "-inform", inform,
+            *args,
+            "-in", str(cert_filename)
+        ],
         capture_output=True, text=True, check=True
     )
     return cert_proc_result.stdout
+
 
 
 # @contextmanager
@@ -79,7 +95,7 @@ def open_root_shell(device):
             output_lines = stdin.splitlines()
             exit_code = int(output_lines[-1])
 
-            if exit_code != 0:
+            if check_error and exit_code != 0:
                 raise AdbError(f"command exit with error (exit_code: {exit_code})\nstderr: {stderr}")
 
             return stdin, stderr
@@ -95,7 +111,8 @@ def device_is_rooted(device: AdbDevice) -> bool:
 
 
 def get_android_version(device: AdbDevice) -> int:
-    return int(device.prop.get("ro.build.version.release"))
+    release = device.prop.get("ro.build.version.release").split(".")
+    return int(release[0])
 
 
 def apex_is_present(device: AdbDevice) -> bool:

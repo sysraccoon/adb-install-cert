@@ -12,15 +12,15 @@ Change path to pem certificate and run:
 nix --extra-experimental-features "nix-command flakes" run "github:sysraccoon/adb-install-cert" -- --pem-cert ~/path/to/cert.pem
 ```
 
-## PyPi installation
+## pip installation
 
 ```sh
-pip install adb-install-cert
+pip3 install adb-install-cert
 ```
 
 ## NixOS flake installation
 
-```
+```nix
 # flake.nix
 
 {
@@ -28,14 +28,14 @@ pip install adb-install-cert
     inputs.adb-install-cert.url = "github:sysraccoon/adb-install-cert";
     # ...
 
-    outputs = { self, nixpkgs, ... } @ inputs {
+    outputs = { self, nixpkgs, adb-install-cert, ... } {
         nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem rec {
             system = "x86_64-linux";
             specialArgs = { inherit self system; };
             modules = [
                 {
                     environment.systemPackages = [
-                        self.inputs.adb-install-cert.packages.${system}.adb-install-cert;
+                        adb-install-cert.packages.${system}.adb-install-cert;
                     ];
                 }
             ];
@@ -46,7 +46,7 @@ pip install adb-install-cert
 
 ## Home-Manager flake installation
 
-```
+```nix
 # flake.nix
 {   
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
@@ -57,14 +57,14 @@ pip install adb-install-cert
     inputs.adb-install-cert.url = "github:sysraccoon/adb-install-cert";
     # ...
 
-    outputs = { self, nixpkgs, ... } @ inputs {
+    outputs = { self, nixpkgs, adb-install-cert, ... } {
         homeConfigurations.USERNAME = home-manager.lib.homeManagerConfiguration rec {
             system = "x86_64-linux";
             specialArgs = { inherit self system; };
             modules = [
                 {
                     home.packages = [
-                        self.inputs.adb-install-cert.packages.${system}.adb-install-cert;
+                        adb-install-cert.packages.${system}.adb-install-cert;
                     ];
                 }
             ];
@@ -78,20 +78,31 @@ pip install adb-install-cert
 
 After installation, you can plug your device and run:
 
+```sh
+$ adb-install-cert --cert ~/path/to/cert.pem
 ```
-$ adb-install-cert --pem-cert ~/path/to/cert.pem
+
+If certificate format detect incorrectly, pass it directly (only `der` and `pem` support):
+```sh
+$ adb-install-cert --cert ~/path/to/cert.crt --cert-format der
+```
+
+By default `adb-install-cert` automatically select installation mode, based on android version.
+If you want override it, pass `--mode` option (see `--help` or read technical description below for more information):
+```
+$ adb-install-cert --cert ~/path/to/cert.pem --mode temporary
 ```
 
 If multiple devices present, you can specify one by serial:
 
 ```
-$ adb-install-cert --pem-cert ~/path/to/cert.pem --device-serial some-serial
+$ adb-install-cert --cert ~/path/to/cert.pem --device-serial some-serial
 ```
 
 As alternative, you can use environment variables, as described [here](https://github.com/openatx/adbutils?tab=readme-ov-file#environment):
 
 ```
-$ ANDROID_SERIAL=emulator-5556 adb-install-cert --pem-cert ~/path/to/cert.pem
+$ ANDROID_SERIAL=emulator-5556 adb-install-cert --cert ~/path/to/cert.pem
 ```
 
 ## Technical Description
