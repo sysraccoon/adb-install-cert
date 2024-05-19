@@ -2,7 +2,7 @@
 
 This script automatically detect android version and choose preffered way to install certificate to system store.
 
-If you want manually install certificate (or just want to explore, how to do that) see [my guide](./guide/README.md)
+If you want manually install certificate, see [my guide](./guide/README.md)
 
 ## Quick start
 
