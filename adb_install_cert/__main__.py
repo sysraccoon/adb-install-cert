@@ -4,17 +4,17 @@ import logging
 
 from adbutils import adb, AdbDevice
 from tempfile import TemporaryDirectory
-from pathlib import Path
+from pathlib import Path, PosixPath
 
 from adb_install_cert.utils import \
     prepare_pem, open_root_shell, device_is_rooted, get_android_version, \
     convert_der_to_pem, convert_pem_to_pem
 
 
-REMOTE_OUTPUT_DIR = Path("/data/local/tmp")
+REMOTE_OUTPUT_DIR = PosixPath("/data/local/tmp")
 REMOTE_TEMP_CACERTS_DIR = REMOTE_OUTPUT_DIR / "cacerts"
-REMOTE_CACERTS_DIR = Path("/system/etc/security/cacerts")
-APEX_CACERTS_DIR = Path("/apex/com.android.conscrypt/cacerts")
+REMOTE_CACERTS_DIR = PosixPath("/system/etc/security/cacerts")
+APEX_CACERTS_DIR = PosixPath("/apex/com.android.conscrypt/cacerts")
 
 INFORM_AUTO = "auto"
 INFORM_CONVERTS = {
