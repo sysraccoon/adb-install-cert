@@ -17,6 +17,9 @@ click = "^8.1.7"
 [tool.poetry.scripts]
 adb-install-cert = "adb_install_cert.__main__:adb_install_cert"
 
+[tool.poetry.group.dev.dependencies]
+bump-my-version = "^1.2.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
