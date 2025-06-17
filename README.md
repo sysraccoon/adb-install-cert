@@ -37,16 +37,19 @@ ANDROID_SERIAL=emulator-5556 adb-install-cert --cert ~/path/to/cert.pem
 
 ## Installation
 
-pipx variant:
+`adb` is required:
+```sh
+sudo apt install adb
+```
 
+install `adb-install-cert` from pypi:
 ```sh
 pipx install adb-install-cert
 ```
 
-nix variant:
-
+or install development version from github:
 ```sh
-nix install github:sysraccoon/adb-install-cert
+pipx install git+https://github.com/sysraccoon/adb-install-cert.git
 ```
 
 ## Technical Description
