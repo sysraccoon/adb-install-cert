@@ -1,6 +1,6 @@
 [project]
 name = "adb-install-cert"
-version = "0.2.2"
+version = "0.2.3-dev0"
 description = "Install certificates to android system store"
 authors = [{ name = "sysraccoon", email = "sysraccoon@gmail.com" }]
 requires-python = "~=3.10"
@@ -24,7 +24,7 @@ include = ["adb_install_cert"]
 include = ["adb_install_cert"]
 
 [tool.bumpversion]
-current_version = "0.2.2"
+current_version = "0.2.3-dev0"
 parse = """(?x)
     (?P<major>0|[1-9]\\d*)\\.
     (?P<minor>0|[1-9]\\d*)\\.
